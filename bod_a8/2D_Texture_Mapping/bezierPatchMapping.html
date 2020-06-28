@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<img>
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+    precision mediump float;
+
+    attribute vec4 vPosition;
+    attribute vec4 vNormal;
+    varying vec3 fN, fL, fE, fL2;
+    uniform mat4 modelViewMatrix;
+    uniform mat3 normalModelViewMatrix;
+    uniform mat4 projectionMatrix;
+
+    varying vec4 fColor;
+
+    attribute vec2 vTexCoord; //texture coordinate from application
+    varying vec2 texCoord; //output tex coordinate to be interpolated
+
+    uniform vec4 ambientProduct;
+    uniform vec4 diffuseProduct;
+    uniform vec4 specularProduct;
+
+    uniform vec4 lightPosition;
+    uniform vec4 lightPosition2;
+    uniform float shininess;
+
+    void main() {
+            vec3 pos = (modelViewMatrix * vPosition).xyz;
+            fL = normalize( lightPosition.xyz - pos );
+            fL2 = normalize( lightPosition2.xyz - pos );
+            fE = normalize( -pos );
+            fN = normalize( normalModelViewMatrix*vNormal.xyz);
+            vec3 fH = normalize( fL +fL2+ fE );
+            vec4 ambient = ambientProduct;
+            float diffuseTerm = max( dot(fL, fN), 0.0 );
+            float diffuseTerm2 = max( dot(fL2, fN), 0.0 );
+            vec4  diffuse = diffuseTerm*diffuseProduct;
+            vec4  diffuse2 = diffuseTerm2*diffuseProduct;
+            vec4  totalDiffuse = diffuse+diffuse2;
+            float specularTerm = pow( max(dot(fN, fH), 0.0), shininess );
+            vec4  specular = specularTerm * specularProduct;
+            if( dot((fL+fL2), fN) < 0.0 ) { specular = vec4(0.0, 0.0, 0.0, 1.0);}
+            gl_Position = projectionMatrix * vec4(pos, 1.0);
+            fColor = ambient + totalDiffuse +specular ;
+            fColor.a = 1.0;
+            texCoord = vTexCoord;
+    }
+</script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+    precision mediump float;
+    uniform vec4 ambientProduct;
+    uniform vec4 diffuseProduct;
+    uniform vec4 specularProduct;
+    uniform float shininess;
+    varying vec3 fN, fL, fE,fL2;
+
+    varying vec2 texCoord;
+    uniform sampler2D texture;
+
+    varying vec4 fColor;
+
+    void
+    main()
+    {
+        gl_FragColor = fColor * texture2D( texture, texCoord );
+    }
+</script>
+    <img id="stars" src="stars.jpg" height="0" width="0"/>
+    <script type="text/javascript" src="../Common/webgl-utils.js"></script>
+    <script type="text/javascript" src="../Common/initShaders.js"></script>
+    <script type="text/javascript" src="../Common/MV.js"></script>
+    <script type="text/javascript" src="bezierPatchMapping.js"></script>
+</head>
+
+<body>
+<canvas id="gl-canvas" width="512" height="512">
+    Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>
+<h2>Controls for the Camera</h2>
+<label for="projection">Specify a Projection:</label>
+<select id="projection">
+    <option value="Parallel">Parallel</option>
+    <option value="Perspective">Perspective</option>
+</select>
+
+<h3>Controls</h3>
+<p>
+    Press 'Q' to increase the cylinder angle(rotate left) height and 'A' to decrease the cylinder angle(rotate right).<br />
+    Press 'W' to increase the height and 'S' to decrease the height.<br />
+    Press 'E' to increase the orbit radius and 'D' to decrease the orbit radius.<br />
+    Press 'R' to increase the resolution and 'F' to decrease the resolution.<br />
+</p>
+<h3>Reset</h3>
+<p>
+    Press the 0 digit bar Key to reset the cube and delta values.<br />
+</p>
+
+<h3>Note</h3>
+<p>
+    Due to the oscillating natural of the sin curve, the height has a max and min point after which it would bound back in the other direction.<br />
+</p>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+attribute vec4 vPosition, vColor;
+varying vec4 fColor;
+uniform mat4 rotationMatrix;
+uniform mat4 translateMatrix;
+uniform mat4 scaleMatrix;
+
+void main()
+{
+    gl_Position = (translateMatrix * rotationMatrix) * scaleMatrix * vPosition;
+    fColor = vColor;
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+precision mediump float;
+varying vec4 fColor;
+
+void
+main()
+{
+    gl_FragColor = fColor;
+}
+</script>
+
+<script type="text/javascript" src="../Common/webgl-utils.js"></script>
+<script type="text/javascript" src="../Common/initShaders.js"></script>
+<script type="text/javascript" src="../Common/MV.js"></script>
+<script type="text/javascript" src="animatedPologon.js"></script>
+</head>
+
+<body>
+<canvas id="gl-canvas" width="500" height="500" onmousedown="pentagon(event.offsetX,event.offsetY)" >
+Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>
+<br/>
+<button type="button" onclick="triangleDirection = !triangleDirection">Change direction of triangle!</button>
+<br/>
+<button type="button" onclick="squareDirection = !squareDirection">Change direction of square!</button>
+
+<br/>
+<h3>Ellipse color</h3>
+<p>
+To change the color of the ellipse, Press 'r' - red, 'g' - green, 'b' - blue, 'y' - yellow, 'p' - purple, 'w' - white <br />
+</p>
+
+<p>
+Left click anywhere on the screen to spawn a small pentagon or a random color.
+</p>
+</body>
+</html>

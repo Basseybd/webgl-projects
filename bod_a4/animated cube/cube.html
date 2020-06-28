@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec4 vPosition, vColor;
+    varying vec4 fColor;
+    uniform mat4 rotationMatrix;
+    uniform mat4 translateMatrix;
+    uniform mat4 scaleMatrix;
+
+    void main()
+    {
+    gl_Position = (translateMatrix * rotationMatrix) * scaleMatrix * vec4(vPosition.xyz, 1.0);
+    fColor = vColor;
+    }
+</script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+precision mediump float;
+varying vec4 fColor;
+
+void
+main()
+{
+    gl_FragColor = fColor;
+}
+</script>
+
+    <script type="text/javascript" src="../Common/webgl-utils.js"></script>
+    <script type="text/javascript" src="../Common/initShaders.js"></script>
+    <script type="text/javascript" src="../Common/MV.js"></script>
+    <script type="text/javascript" src="cube.js"></script>
+</head>
+
+<body>
+<canvas id="gl-canvas" width="512" height="512">
+    Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>
+<h2>Controlling the cube</h2>
+<label for="transformation">Specify a transformation:</label>
+<select id="transformation">
+    <option value="SCALE">SCALE</option>
+    <option value="ROTATE">ROTATE</option>
+    <option value="TRANSLATE">TRANSLATE</option>
+</select>
+
+<h3>Scale controls</h3>
+<p>
+    On the X axis, press the Q Key to scale up and press the A key to scale down.<br />
+    On the Y axis, press the W Key to scale up and press the S key to scale down.<br />
+    On the Z axis, press the E Key to scale up and press the D key to scale down.<br />
+</p>
+
+<h3>Rotate controls</h3>
+<p>
+    Press the X Key to rotate on X axis and the C Key in the reverse direction. <br />
+    Press the V Key to rotate on Y axis and the B Key in the reverse direction. <br />
+    Press the N Key to rotate on Z axis and the M Key in the reverse direction. <br />
+</p>
+<h3>Translate controls</h3>
+<p>
+    Press the I Key to move the cube up. <br />
+    Press the K Key to move the cube down. <br />
+    Press the J Key to move the cube left. <br />
+    Press the L Key to move the cube right. <br />
+    Note that since you will be using the default orthographic projection, translation in the Z direction should have no visible effect on the size of your cube.
+    Of course if you transform the cube outside of the default view volume, it will be clipped. <br />
+    Press the U Key to move the cube up on the z axis. <br />
+    Press the O Key to move the cube down on the z axis. <br />
+</p>
+<h3>Increase Delta</h3>
+<p>
+    In any transformation, press the R key to increase the delta and the F key to decrease delta.<br />
+</p>
+<h3>Reset</h3>
+<p>
+    Press the 0 digit bar Key to reset the cube and delta values.<br />
+</p>
+</body>
+</html>
